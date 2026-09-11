@@ -11,4 +11,10 @@
 
     <name>skyrescue-tdd</name>
     <description>SkyRescue - Coordinacion de drones para emergencias</description>
+
+    <properties>
+        <maven.compiler.release>17</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
 </project>
