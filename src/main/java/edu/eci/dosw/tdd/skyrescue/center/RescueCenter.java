@@ -99,11 +99,7 @@ public class RescueCenter {
             throw new IllegalArgumentException("missionId must not be null or blank.");
         }
 
-        Mission mission = missions.stream()
-                .filter(m -> m.getId().equals(missionId))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Mission not found: " + missionId));
+        Mission mission = findMissionById(missionId);
 
         if (mission.getStatus() == MissionStatus.COMPLETED) {
             throw new IllegalStateException(
@@ -123,5 +119,20 @@ public class RescueCenter {
 
     public void addMission(Mission mission) {
         missions.add(mission);
+    }
+
+    /**
+     * Finds a mission by its identifier.
+     *
+     * @param missionId mission identifier.
+     * @return the mission found.
+     * @throws IllegalArgumentException if no mission exists with that id.
+     */
+    private Mission findMissionById(String missionId) {
+        return missions.stream()
+                .filter(m -> m.getId().equals(missionId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Mission not found: " + missionId));
     }
 }
