@@ -69,12 +69,7 @@ public class RescueCenter {
      * @return created mission.
      */
     public Mission assignMission(String operatorId, String droneId, String location, int distanceKm) {
-        RescueOperator operator = null;
-        for (RescueOperator op : operators) {
-            if (op.getId().equals(operatorId)) {
-                operator = op;
-            }
-        }
+        RescueOperator operator = findOperatorById(operatorId);
  
         Drone drone = drones.get(droneId);
  
@@ -102,6 +97,15 @@ public class RescueCenter {
         drone.setAvailable(false);
         missions.add(mission);
         return mission;
+    }
+
+    private RescueOperator findOperatorById(String operatorId) {
+        for (RescueOperator operator : operators) {
+            if (operator.getId().equals(operatorId)) {
+                return operator;
+            }
+        }
+        return null;
     }
 
     /**
