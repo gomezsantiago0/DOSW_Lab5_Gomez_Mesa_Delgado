@@ -77,9 +77,13 @@ public class RescueCenter {
         }
  
         Drone drone = drones.get(droneId);
-        
+ 
         if (drone == null) {
             throw new IllegalArgumentException("Drone not found: " + droneId);
+        }
+        
+        if (!drone.isAvailable()) {
+            throw new IllegalStateException("Drone is already busy: " + droneId);
         }
  
         Mission mission = new Mission(
