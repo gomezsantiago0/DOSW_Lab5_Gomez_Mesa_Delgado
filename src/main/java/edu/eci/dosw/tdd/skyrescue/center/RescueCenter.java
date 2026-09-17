@@ -37,8 +37,14 @@ public class RescueCenter {
      * @return true if it was registered; false otherwise.
      */
     public boolean addDrone(Drone drone) {
-        // TODO Implement using TDD.
-        return false;
+        if (drone == null || drone.getId() == null || drone.getId().isBlank()) {
+            return false;
+        }
+        if (drones.containsKey(drone.getId())) {
+            return false;
+        }
+        drones.put(drone.getId(), drone);
+        return true;
     }
 
     /**
