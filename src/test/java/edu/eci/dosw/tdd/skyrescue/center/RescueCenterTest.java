@@ -37,16 +37,24 @@ class RescueCenterTest {
     // -------------------------------------------------------------------------
 
     /**
+     * Creates a drone and registers it in the center using addDrone.
+     *
+     * @return a registered, available drone with a 50 km max range.
+     */
+    private Drone registerAvailableDrone() {
+        Drone drone = new Drone("DR-1", "Falcon", 50);
+        center.addDrone(drone);
+        return drone;
+    }
+
+    /**
      * Case: Valid operator and drone, allowed distance.
      * Expected result: the mission is created with ACTIVE status
      * and the drone becomes unavailable.
      */
     @Test
     void shouldAssignMissionWhenDataIsValid() {
-        // addDrone is not reliable yet, so we put the drone directly
-        // in the center's drone map (same package, field is not private).
-        Drone drone = new Drone("DR-1", "Falcon", 50);
-        center.drones.put(drone.getId(), drone);
+        Drone drone = registerAvailableDrone();
  
         Mission mission = center.assignMission(operator.getId(), drone.getId(), "Downtown", 20);
  
@@ -75,8 +83,7 @@ class RescueCenterTest {
      */
     @Test
     void shouldThrowIllegalStateExceptionWhenDroneIsAlreadyBusy() {
-        Drone drone = new Drone("DR-1", "Falcon", 50);
-        center.drones.put(drone.getId(), drone);
+        Drone drone = registerAvailableDrone();
         drone.setAvailable(false);
  
         try {
@@ -94,8 +101,7 @@ class RescueCenterTest {
      */
     @Test
     void shouldThrowIllegalArgumentExceptionWhenDistanceExceedsMaxRange() {
-        Drone drone = new Drone("DR-1", "Falcon", 50);
-        center.drones.put(drone.getId(), drone);
+        Drone drone = registerAvailableDrone();
  
         try {
             center.assignMission(operator.getId(), drone.getId(), "Downtown", 100);

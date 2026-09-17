@@ -18,7 +18,7 @@ import edu.eci.dosw.tdd.skyrescue.operator.RescueOperator;
 public class RescueCenter {
 
     private final List<RescueOperator> operators;
-    final Map<String, Drone> drones;
+    private final Map<String, Drone> drones;
     private final List<Mission> missions;
 
     public RescueCenter() {
