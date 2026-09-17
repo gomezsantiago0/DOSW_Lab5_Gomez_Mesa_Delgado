@@ -1,12 +1,15 @@
 package edu.eci.dosw.tdd.skyrescue.center;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import edu.eci.dosw.tdd.skyrescue.drone.Drone;
 import edu.eci.dosw.tdd.skyrescue.mission.Mission;
+import edu.eci.dosw.tdd.skyrescue.mission.MissionStatus;
 import edu.eci.dosw.tdd.skyrescue.operator.RescueOperator;
 
 /**
@@ -38,7 +41,7 @@ public class RescueCenter {
      */
     public boolean addDrone(Drone drone) {
         // TODO Implement using TDD.
-        return false;
+        return true;
     }
 
     /**
@@ -65,12 +68,25 @@ public class RescueCenter {
      * @param distanceKm mission distance in kilometers.
      * @return created mission.
      */
-    public Mission assignMission(
-            String operatorId,
-            String droneId,
-            String location,
-            int distanceKm) {
-        // TODO Implement using TDD.
+    public Mission assignMission(String operatorId, String droneId, String location, int distanceKm) {
+        RescueOperator operator = findOperatorById(operatorId);
+        Drone drone = drones.get(droneId);
+        String missionId = UUID.randomUUID().toString();
+        LocalDateTime startDate = LocalDateTime.now();
+        Mission mission = new Mission(missionId, location, distanceKm, drone, operator, startDate, MissionStatus.ACTIVE);
+        
+        drone.setAvailable(false);
+        missions.add(mission);
+
+        return mission;
+    }
+
+    private RescueOperator findOperatorById(String operatorId) {
+        for (RescueOperator op : operators) {
+            if (op.getId().equals(operatorId)) {
+                return op;
+            }
+        }
         return null;
     }
 

@@ -2,6 +2,7 @@ package edu.eci.dosw.tdd.skyrescue.center;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -49,5 +50,20 @@ class RescueCenterTest {
 
         assertEquals(MissionStatus.ACTIVE, mission.getStatus());
         assertFalse(drone.isAvailable());
+    }
+
+    /**
+     * Case: Nonexistent drone.
+     * Expected result: IllegalArgumentException.
+     */
+    @Test
+    void shouldThrowIllegalArgumentExceptionWhenDroneDoesNotExist() {
+        try {
+            center.assignMission(operator.getId(), "DR-NON-EXISTENT", "Downtown", 20);
+            fail("An IllegalArgumentException was expected");
+        } catch (IllegalArgumentException e) {
+            // If we get here, the method threw the correct exception.
+            // Nothing else to do: the test passes.
+        }
     }
 }
