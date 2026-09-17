@@ -1,5 +1,6 @@
 package edu.eci.dosw.tdd.skyrescue.center;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.Map;
 
 import edu.eci.dosw.tdd.skyrescue.drone.Drone;
 import edu.eci.dosw.tdd.skyrescue.mission.Mission;
+import edu.eci.dosw.tdd.skyrescue.mission.MissionStatus;
 import edu.eci.dosw.tdd.skyrescue.operator.RescueOperator;
 
 /**
@@ -93,11 +95,44 @@ public class RescueCenter {
      * @return completed mission.
      */
     public Mission completeMission(String missionId) {
-        // TODO Implement using TDD.
-        return null;
+        if (missionId == null || missionId.isBlank()) {
+            throw new IllegalArgumentException("missionId must not be null or blank.");
+        }
+
+        Mission mission = findMissionById(missionId);
+
+        if (mission.getStatus() == MissionStatus.COMPLETED) {
+            throw new IllegalStateException(
+                    "Mission is already completed: " + missionId);
+        }
+
+        mission.setStatus(MissionStatus.COMPLETED);
+        mission.setEndDate(LocalDateTime.now());
+        mission.getDrone().setAvailable(true);
+
+        return mission;
     }
 
     public boolean addOperator(RescueOperator operator) {
         return operators.add(operator);
+    }
+
+    public void addMission(Mission mission) {
+        missions.add(mission);
+    }
+
+    /**
+     * Finds a mission by its identifier.
+     *
+     * @param missionId mission identifier.
+     * @return the mission found.
+     * @throws IllegalArgumentException if no mission exists with that id.
+     */
+    private Mission findMissionById(String missionId) {
+        return missions.stream()
+                .filter(m -> m.getId().equals(missionId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Mission not found: " + missionId));
     }
 }
