@@ -3,6 +3,10 @@ package edu.eci.dosw.tdd.skyrescue.center;
 import org.junit.jupiter.api.BeforeEach;
 
 import edu.eci.dosw.tdd.skyrescue.operator.RescueOperator;
+import edu.eci.dosw.tdd.skyrescue.drone.Drone;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * TDD tests for RescueCenter.
@@ -23,5 +27,14 @@ class RescueCenterTest {
         center = new RescueCenter();
         operator = new RescueOperator("OP-1", "Alice");
         center.addOperator(operator);
+    }
+    
+    @Test
+    void shouldRegisterDroneWhenDataIsValid() {
+        Drone drone = new Drone("D1", "Falcon-X", 20);
+
+        boolean result = center.addDrone(drone);
+
+        assertTrue(result);
     }
 }
