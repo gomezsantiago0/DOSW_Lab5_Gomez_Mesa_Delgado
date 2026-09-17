@@ -37,4 +37,31 @@ class RescueCenterTest {
 
         assertTrue(result);
     }
+    
+    @Test
+    void shouldNotRegisterDroneWhenDroneIsNull() {
+        boolean result = center.addDrone(null);
+
+        assertFalse(result);
+    }
+
+    @Test
+    void shouldNotRegisterDroneWhenIdIsBlank() {
+        Drone drone = new Drone("", "Falcon-X", 20);
+
+        boolean result = center.addDrone(drone);
+
+        assertFalse(result);
+    }
+
+    @Test
+    void shouldNotRegisterSecondDroneWhenIdIsDuplicated() {
+        Drone drone1 = new Drone("D1", "Falcon-X", 20);
+        Drone drone2 = new Drone("D1", "Falcon-Y", 30);
+
+        center.addDrone(drone1);
+        boolean result = center.addDrone(drone2);
+
+        assertFalse(result);
+    }
 }
