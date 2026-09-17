@@ -81,9 +81,13 @@ public class RescueCenter {
         if (drone == null) {
             throw new IllegalArgumentException("Drone not found: " + droneId);
         }
-        
+
         if (!drone.isAvailable()) {
             throw new IllegalStateException("Drone is already busy: " + droneId);
+        }
+
+        if (distanceKm > drone.getMaxRangeKm()) {
+            throw new IllegalArgumentException("Distance exceeds drone max range: " + distanceKm);
         }
  
         Mission mission = new Mission(

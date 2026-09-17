@@ -68,7 +68,7 @@ class RescueCenterTest {
             // Nothing else to do: the test passes.
         }
     }
-    
+
     /**
      * Case: Drone already busy.
      * Expected result: IllegalStateException.
@@ -84,6 +84,23 @@ class RescueCenterTest {
  
             fail("An IllegalStateException was expected");
         } catch (IllegalStateException e) {
+            // Expected exception, the test passes.
+        }
+    }
+
+    /**
+     * Case: Distance greater than the drone's max range.
+     * Expected result: IllegalArgumentException.
+     */
+    @Test
+    void shouldThrowIllegalArgumentExceptionWhenDistanceExceedsMaxRange() {
+        Drone drone = new Drone("DR-1", "Falcon", 50);
+        center.drones.put(drone.getId(), drone);
+ 
+        try {
+            center.assignMission(operator.getId(), drone.getId(), "Downtown", 100);
+            fail("An IllegalArgumentException was expected");
+        } catch (IllegalArgumentException e) {
             // Expected exception, the test passes.
         }
     }
