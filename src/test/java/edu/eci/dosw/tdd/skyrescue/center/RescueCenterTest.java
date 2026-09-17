@@ -66,4 +66,23 @@ class RescueCenterTest {
             // Nothing else to do: the test passes.
         }
     }
+
+    /**
+     * Case: Drone already busy.
+     * Expected result: IllegalStateException.
+     */
+    @Test
+    void shouldThrowIllegalStateExceptionWhenDroneIsAlreadyBusy() {
+        Drone drone = new Drone("DR-1", "Falcon", 50);
+        center.addDrone(drone);
+        drone.setAvailable(false);
+
+        try {
+            center.assignMission(operator.getId(), drone.getId(), "Downtown", 20);
+
+            fail("An IllegalStateException was expected");
+        } catch (IllegalStateException e) {
+            // Expected exception, the test passes.
+        }
+    }
 }
