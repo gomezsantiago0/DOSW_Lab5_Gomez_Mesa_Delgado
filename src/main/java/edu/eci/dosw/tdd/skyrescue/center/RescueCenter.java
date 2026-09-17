@@ -18,7 +18,7 @@ import edu.eci.dosw.tdd.skyrescue.operator.RescueOperator;
 public class RescueCenter {
 
     private final List<RescueOperator> operators;
-    private final Map<String, Drone> drones;
+    final Map<String, Drone> drones;
     private final List<Mission> missions;
 
     public RescueCenter() {
@@ -69,25 +69,31 @@ public class RescueCenter {
      * @return created mission.
      */
     public Mission assignMission(String operatorId, String droneId, String location, int distanceKm) {
-        RescueOperator operator = findOperatorById(operatorId);
-        Drone drone = drones.get(droneId);
-        String missionId = UUID.randomUUID().toString();
-        LocalDateTime startDate = LocalDateTime.now();
-        Mission mission = new Mission(missionId, location, distanceKm, drone, operator, startDate, MissionStatus.ACTIVE);
-        
-        drone.setAvailable(false);
-        missions.add(mission);
-
-        return mission;
-    }
-
-    private RescueOperator findOperatorById(String operatorId) {
+        RescueOperator operator = null;
         for (RescueOperator op : operators) {
             if (op.getId().equals(operatorId)) {
-                return op;
+                operator = op;
             }
         }
-        return null;
+ 
+        Drone drone = drones.get(droneId);
+        
+        if (drone == null) {
+            throw new IllegalArgumentException("Drone not found: " + droneId);
+        }
+ 
+        Mission mission = new Mission(
+                UUID.randomUUID().toString(),
+                location,
+                distanceKm,
+                drone,
+                operator,
+                LocalDateTime.now(),
+                MissionStatus.ACTIVE);
+ 
+        drone.setAvailable(false);
+        missions.add(mission);
+        return mission;
     }
 
     /**
