@@ -41,7 +41,7 @@ public class RescueCenter {
      */
     public boolean addDrone(Drone drone) {
         // TODO Implement using TDD.
-        return true;
+        return false;
     }
 
     /**
