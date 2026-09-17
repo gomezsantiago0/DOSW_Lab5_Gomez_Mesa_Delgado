@@ -100,4 +100,8 @@ public class RescueCenter {
     public boolean addOperator(RescueOperator operator) {
         return operators.add(operator);
     }
+
+    public void addMission(Mission mission) {
+        missions.add(mission);
+    }
 }
