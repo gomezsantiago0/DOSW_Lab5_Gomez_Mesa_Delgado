@@ -85,4 +85,21 @@ class RescueCenterTest {
             // Expected exception, the test passes.
         }
     }
+
+    /**
+     * Case: Distance greater than the drone's max range.
+     * Expected result: IllegalArgumentException.
+     */
+    @Test
+    void shouldThrowIllegalArgumentExceptionWhenDistanceExceedsMaxRange() {
+        Drone drone = new Drone("DR-1", "Falcon", 50);
+        center.addDrone(drone);
+
+        try {
+            center.assignMission(operator.getId(), drone.getId(), "Downtown", 100);
+            fail("An IllegalArgumentException was expected");
+        } catch (IllegalArgumentException e) {
+            // Expected exception, the test passes.
+        }
+    }
 }
