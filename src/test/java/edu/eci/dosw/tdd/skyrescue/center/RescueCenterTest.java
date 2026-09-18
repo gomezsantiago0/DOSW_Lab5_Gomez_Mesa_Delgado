@@ -16,21 +16,29 @@ import edu.eci.dosw.tdd.skyrescue.mission.MissionStatus;
 import edu.eci.dosw.tdd.skyrescue.operator.RescueOperator;
 
 /**
-* TDD tests for RescueCenter.
-*/
+ * TDD tests for RescueCenter.
+ */
 class RescueCenterTest {
+
     private RescueCenter center;
     private RescueOperator operator;
     private Drone drone;
     private Mission activeMission;
 
+    /**
+     * Initializes a fresh RescueCenter and a valid RescueOperator
+     * before each test, and registers the operator in the center
+     * so every test starts from a clean, consistent state.
+     */
     @BeforeEach
     void setUp() {
         center = new RescueCenter();
         operator = new RescueOperator("OP-1", "Alice");
         center.addOperator(operator);
+
         drone = new Drone("D-1", "ModelX", 100);
         drone.setAvailable(false);
+
         activeMission = new Mission(
                 "M-1",
                 "Zona Norte",
@@ -40,12 +48,14 @@ class RescueCenterTest {
                 LocalDateTime.now(),
                 MissionStatus.ACTIVE
         );
+
         center.addMission(activeMission);
     }
 
     // -------------------------------------------------------------------------
     // completeMission - Gómez
     // -------------------------------------------------------------------------
+
     @Test
     void shouldCompleteMissionAndMakeDroneAvailable() {
         Mission result = center.completeMission("M-1");
@@ -89,10 +99,10 @@ class RescueCenterTest {
                 () -> center.completeMission("   "));
     }
 
+    // Prueba extra de Delgado para completeMission
     @Test
     void shouldReturnCompletedMissionObject() {
         Mission result = center.completeMission("M-1");
-
         assertEquals("M-1", result.getId());
         assertEquals(MissionStatus.COMPLETED, result.getStatus());
         assertTrue(result.getEndDate().isBefore(LocalDateTime.now().plusSeconds(1)));
@@ -101,24 +111,33 @@ class RescueCenterTest {
     // -------------------------------------------------------------------------
     // assignMission - Delgado
     // -------------------------------------------------------------------------
+
     private Drone registerAvailableDrone() {
         Drone d = new Drone("DR-1", "Falcon", 50);
         center.addDrone(d);
         return d;
     }
 
+    private RescueOperator registerFreeOperator() {
+        RescueOperator op = new RescueOperator("OP-FREE", "FreeOperator");
+        center.addOperator(op);
+        return op;
+    }
+
     @Test
     void shouldAssignMissionWhenDataIsValid() {
+        RescueOperator freeOp = registerFreeOperator();
         Drone drone = registerAvailableDrone();
-        Mission mission = center.assignMission(operator.getId(), drone.getId(), "Downtown", 20);
+        Mission mission = center.assignMission(freeOp.getId(), drone.getId(), "Downtown", 20);
         assertEquals(MissionStatus.ACTIVE, mission.getStatus());
         assertFalse(drone.isAvailable());
     }
 
     @Test
     void shouldThrowIllegalArgumentExceptionWhenDroneDoesNotExist() {
+        RescueOperator freeOp = registerFreeOperator();
         try {
-            center.assignMission(operator.getId(), "DR-NON-EXISTENT", "Downtown", 20);
+            center.assignMission(freeOp.getId(), "DR-NON-EXISTENT", "Downtown", 20);
             fail("An IllegalArgumentException was expected");
         } catch (IllegalArgumentException e) {
             // Expected exception, the test passes.
@@ -127,10 +146,11 @@ class RescueCenterTest {
 
     @Test
     void shouldThrowIllegalStateExceptionWhenDroneIsAlreadyBusy() {
+        RescueOperator freeOp = registerFreeOperator();
         Drone drone = registerAvailableDrone();
         drone.setAvailable(false);
         try {
-            center.assignMission(operator.getId(), drone.getId(), "Downtown", 20);
+            center.assignMission(freeOp.getId(), drone.getId(), "Downtown", 20);
             fail("An IllegalStateException was expected");
         } catch (IllegalStateException e) {
             // Expected exception, the test passes.
@@ -139,9 +159,10 @@ class RescueCenterTest {
 
     @Test
     void shouldThrowIllegalArgumentExceptionWhenDistanceExceedsMaxRange() {
+        RescueOperator freeOp = registerFreeOperator();
         Drone drone = registerAvailableDrone();
         try {
-            center.assignMission(operator.getId(), drone.getId(), "Downtown", 100);
+            center.assignMission(freeOp.getId(), drone.getId(), "Downtown", 100);
             fail("An IllegalArgumentException was expected");
         } catch (IllegalArgumentException e) {
             // Expected exception, the test passes.
@@ -160,9 +181,22 @@ class RescueCenterTest {
         }
     }
 
+    // Prueba extra de Mesa para assignMission
+    @Test
+    void shouldThrowIllegalStateExceptionWhenOperatorAlreadyHasActiveMission() {
+        Drone drone = registerAvailableDrone();
+        try {
+            center.assignMission(operator.getId(), drone.getId(), "Downtown", 20);
+            fail("An IllegalStateException was expected");
+        } catch (IllegalStateException e) {
+            // Expected exception, the test passes.
+        }
+    }
+
     // -------------------------------------------------------------------------
     // addDrone - Mesa
     // -------------------------------------------------------------------------
+
     @Test
     void shouldRegisterDroneWhenDataIsValid() {
         Drone drone = new Drone("D1", "Falcon-X", 20);
@@ -200,6 +234,7 @@ class RescueCenterTest {
         assertTrue(drone.isAvailable());
     }
 
+    // Prueba extra de Delgado para addDrone
     @Test
     void shouldNotRegisterDroneWhenIdIsNull() {
         Drone drone = new Drone(null, "Falcon-X", 20);
