@@ -82,6 +82,14 @@ public class RescueCenter {
             throw new IllegalArgumentException("Operator not found: " + operatorId);
         }
 
+        boolean hasActiveMission = missions.stream()
+                .anyMatch(m -> m.getOperator().getId().equals(operatorId)
+                        && m.getStatus() == MissionStatus.ACTIVE);
+        if (hasActiveMission) {
+            throw new IllegalStateException(
+                    "Operator already has an active mission: " + operatorId);
+        }
+
         Drone drone = drones.get(droneId);
 
         if (drone == null) {
