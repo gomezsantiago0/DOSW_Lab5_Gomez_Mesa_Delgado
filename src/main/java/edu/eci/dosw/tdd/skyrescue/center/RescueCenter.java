@@ -77,9 +77,13 @@ public class RescueCenter {
      */
     public Mission assignMission(String operatorId, String droneId, String location, int distanceKm) {
         RescueOperator operator = findOperatorById(operatorId);
- 
+
+        if (operator == null) {
+            throw new IllegalArgumentException("Operator not found: " + operatorId);
+        }
+
         Drone drone = drones.get(droneId);
- 
+
         if (drone == null) {
             throw new IllegalArgumentException("Drone not found: " + droneId);
         }
@@ -91,7 +95,7 @@ public class RescueCenter {
         if (distanceKm > drone.getMaxRangeKm()) {
             throw new IllegalArgumentException("Distance exceeds drone max range: " + distanceKm);
         }
- 
+
         Mission mission = new Mission(
                 UUID.randomUUID().toString(),
                 location,
@@ -100,7 +104,7 @@ public class RescueCenter {
                 operator,
                 LocalDateTime.now(),
                 MissionStatus.ACTIVE);
- 
+
         drone.setAvailable(false);
         missions.add(mission);
         return mission;
