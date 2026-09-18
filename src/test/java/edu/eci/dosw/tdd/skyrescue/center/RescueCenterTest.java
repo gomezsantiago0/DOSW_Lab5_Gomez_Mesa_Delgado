@@ -1,10 +1,8 @@
 package edu.eci.dosw.tdd.skyrescue.center;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -101,5 +99,84 @@ class RescueCenterTest {
 
         assertEquals(MissionStatus.ACTIVE, otherMission.getStatus());
         assertTrue(!drone2.isAvailable());
+    }
+
+    // -------------------------------------------------------------------------
+    // assignMission 
+    // -------------------------------------------------------------------------
+
+    /**
+     * Creates a drone and registers it in the center using addDrone.
+     *
+     * @return a registered, available drone with a 50 km max range.
+     */
+    private Drone registerAvailableDrone() {
+        Drone drone = new Drone("DR-1", "Falcon", 50);
+        center.addDrone(drone);
+        return drone;
+    }
+
+    /**
+     * Case: Valid operator and drone, allowed distance.
+     * Expected result: the mission is created with ACTIVE status
+     * and the drone becomes unavailable.
+     */
+    @Test
+    void shouldAssignMissionWhenDataIsValid() {
+        Drone drone = registerAvailableDrone();
+ 
+        Mission mission = center.assignMission(operator.getId(), drone.getId(), "Downtown", 20);
+ 
+        assertEquals(MissionStatus.ACTIVE, mission.getStatus());
+        assertFalse(drone.isAvailable());
+    }
+ 
+    /**
+     * Case: Nonexistent drone.
+     * Expected result: IllegalArgumentException.
+     */
+    @Test
+    void shouldThrowIllegalArgumentExceptionWhenDroneDoesNotExist() {
+        try {
+            center.assignMission(operator.getId(), "DR-NON-EXISTENT", "Downtown", 20);
+            fail("An IllegalArgumentException was expected");
+        } catch (IllegalArgumentException e) {
+            // If we get here, the method threw the correct exception.
+            // Nothing else to do: the test passes.
+        }
+    }
+
+    /**
+     * Case: Drone already busy.
+     * Expected result: IllegalStateException.
+     */
+    @Test
+    void shouldThrowIllegalStateExceptionWhenDroneIsAlreadyBusy() {
+        Drone drone = registerAvailableDrone();
+        drone.setAvailable(false);
+ 
+        try {
+            center.assignMission(operator.getId(), drone.getId(), "Downtown", 20);
+ 
+            fail("An IllegalStateException was expected");
+        } catch (IllegalStateException e) {
+            // Expected exception, the test passes.
+        }
+    }
+
+    /**
+     * Case: Distance greater than the drone's max range.
+     * Expected result: IllegalArgumentException.
+     */
+    @Test
+    void shouldThrowIllegalArgumentExceptionWhenDistanceExceedsMaxRange() {
+        Drone drone = registerAvailableDrone();
+ 
+        try {
+            center.assignMission(operator.getId(), drone.getId(), "Downtown", 100);
+            fail("An IllegalArgumentException was expected");
+        } catch (IllegalArgumentException e) {
+            // Expected exception, the test passes.
+        }
     }
 }

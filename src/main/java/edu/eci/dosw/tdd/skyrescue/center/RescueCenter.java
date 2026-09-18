@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import edu.eci.dosw.tdd.skyrescue.drone.Drone;
 import edu.eci.dosw.tdd.skyrescue.mission.Mission;
@@ -67,12 +68,43 @@ public class RescueCenter {
      * @param distanceKm mission distance in kilometers.
      * @return created mission.
      */
-    public Mission assignMission(
-            String operatorId,
-            String droneId,
-            String location,
-            int distanceKm) {
-        // TODO Implement using TDD.
+    public Mission assignMission(String operatorId, String droneId, String location, int distanceKm) {
+        RescueOperator operator = findOperatorById(operatorId);
+ 
+        Drone drone = drones.get(droneId);
+ 
+        if (drone == null) {
+            throw new IllegalArgumentException("Drone not found: " + droneId);
+        }
+
+        if (!drone.isAvailable()) {
+            throw new IllegalStateException("Drone is already busy: " + droneId);
+        }
+
+        if (distanceKm > drone.getMaxRangeKm()) {
+            throw new IllegalArgumentException("Distance exceeds drone max range: " + distanceKm);
+        }
+ 
+        Mission mission = new Mission(
+                UUID.randomUUID().toString(),
+                location,
+                distanceKm,
+                drone,
+                operator,
+                LocalDateTime.now(),
+                MissionStatus.ACTIVE);
+ 
+        drone.setAvailable(false);
+        missions.add(mission);
+        return mission;
+    }
+
+    private RescueOperator findOperatorById(String operatorId) {
+        for (RescueOperator operator : operators) {
+            if (operator.getId().equals(operatorId)) {
+                return operator;
+            }
+        }
         return null;
     }
 
