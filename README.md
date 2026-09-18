@@ -39,3 +39,17 @@ operador y un dron disponible; y `completeMission`, que cierra una misión activ
 
 **REFACTOR:** se extrajo el método privado `findMissionById` para simplificar y mejorar
 la legibilidad de `completeMission`, sin modificar su comportamiento.
+
+## Análisis estático - SonarQube
+
+El análisis se ejecutó localmente con SonarQube Community Build (26.9.0.129388) sobre el
+proyecto `skyrescue-tdd`, integrado mediante `sonar-maven-plugin` y el reporte de cobertura
+de JaCoCo.
+
+**Resultados:**
+- Quality Gate: **Passed** ✅
+- Cobertura: **87.1%** (101 líneas a cubrir)
+- Duplicaciones: 0.0%
+- Issues abiertos: 0 Security, 2 Reliability, 21 Maintainability
+
+![Dashboard SonarQube](docs/evidence/sonarqube-dashboard.png)
