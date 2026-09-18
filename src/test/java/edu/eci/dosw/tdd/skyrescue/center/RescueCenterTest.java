@@ -1,12 +1,13 @@
 package edu.eci.dosw.tdd.skyrescue.center;
 
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -14,8 +15,6 @@ import edu.eci.dosw.tdd.skyrescue.drone.Drone;
 import edu.eci.dosw.tdd.skyrescue.mission.Mission;
 import edu.eci.dosw.tdd.skyrescue.mission.MissionStatus;
 import edu.eci.dosw.tdd.skyrescue.operator.RescueOperator;
-
-import java.time.LocalDateTime;
 
 /**
  * TDD tests for RescueCenter.
@@ -103,6 +102,15 @@ class RescueCenterTest {
 
         assertEquals(MissionStatus.ACTIVE, otherMission.getStatus());
         assertTrue(!drone2.isAvailable());
+    }
+
+    @Test
+    void shouldReturnCompletedMissionObject() {
+        Mission result = center.completeMission("M-1");
+
+        assertEquals("M-1", result.getId());
+        assertEquals(MissionStatus.COMPLETED, result.getStatus());
+        assertTrue(result.getEndDate().isBefore(LocalDateTime.now().plusSeconds(1)));
     }
 
     // -------------------------------------------------------------------------
@@ -227,5 +235,12 @@ class RescueCenterTest {
         Drone drone = new Drone("D2", "Falcon-Z", 15);
         center.addDrone(drone);
         assertTrue(drone.isAvailable());
+    }
+
+    @Test
+    void shouldNotRegisterDroneWhenIdIsNull() {
+        Drone drone = new Drone(null, "Falcon-X", 20);
+        boolean result = center.addDrone(drone);
+        assertFalse(result);
     }
 }
