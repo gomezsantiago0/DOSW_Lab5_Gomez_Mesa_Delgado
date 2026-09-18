@@ -2,7 +2,11 @@ package edu.eci.dosw.tdd.skyrescue.center;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -10,10 +14,6 @@ import edu.eci.dosw.tdd.skyrescue.drone.Drone;
 import edu.eci.dosw.tdd.skyrescue.mission.Mission;
 import edu.eci.dosw.tdd.skyrescue.mission.MissionStatus;
 import edu.eci.dosw.tdd.skyrescue.operator.RescueOperator;
-import edu.eci.dosw.tdd.skyrescue.drone.Drone;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 
@@ -55,7 +55,7 @@ class RescueCenterTest {
     }
 
     // -------------------------------------------------------------------------
-    // completeMission 
+    // completeMission - Gómez
     // -------------------------------------------------------------------------
 
     @Test
@@ -106,7 +106,7 @@ class RescueCenterTest {
     }
 
     // -------------------------------------------------------------------------
-    // assignMission 
+    // assignMission - Delgado
     // -------------------------------------------------------------------------
 
     /**
@@ -115,9 +115,9 @@ class RescueCenterTest {
      * @return a registered, available drone with a 50 km max range.
      */
     private Drone registerAvailableDrone() {
-        Drone drone = new Drone("DR-1", "Falcon", 50);
-        center.addDrone(drone);
-        return drone;
+        Drone d = new Drone("DR-1", "Falcon", 50);
+        center.addDrone(d);
+        return d;
     }
 
     /**
@@ -128,13 +128,13 @@ class RescueCenterTest {
     @Test
     void shouldAssignMissionWhenDataIsValid() {
         Drone drone = registerAvailableDrone();
- 
+
         Mission mission = center.assignMission(operator.getId(), drone.getId(), "Downtown", 20);
- 
+
         assertEquals(MissionStatus.ACTIVE, mission.getStatus());
         assertFalse(drone.isAvailable());
     }
- 
+
     /**
      * Case: Nonexistent drone.
      * Expected result: IllegalArgumentException.
@@ -145,8 +145,7 @@ class RescueCenterTest {
             center.assignMission(operator.getId(), "DR-NON-EXISTENT", "Downtown", 20);
             fail("An IllegalArgumentException was expected");
         } catch (IllegalArgumentException e) {
-            // If we get here, the method threw the correct exception.
-            // Nothing else to do: the test passes.
+            // Expected exception, the test passes.
         }
     }
 
@@ -158,10 +157,9 @@ class RescueCenterTest {
     void shouldThrowIllegalStateExceptionWhenDroneIsAlreadyBusy() {
         Drone drone = registerAvailableDrone();
         drone.setAvailable(false);
- 
+
         try {
             center.assignMission(operator.getId(), drone.getId(), "Downtown", 20);
- 
             fail("An IllegalStateException was expected");
         } catch (IllegalStateException e) {
             // Expected exception, the test passes.
@@ -175,7 +173,7 @@ class RescueCenterTest {
     @Test
     void shouldThrowIllegalArgumentExceptionWhenDistanceExceedsMaxRange() {
         Drone drone = registerAvailableDrone();
- 
+
         try {
             center.assignMission(operator.getId(), drone.getId(), "Downtown", 100);
             fail("An IllegalArgumentException was expected");
@@ -183,7 +181,11 @@ class RescueCenterTest {
             // Expected exception, the test passes.
         }
     }
-    
+
+    // -------------------------------------------------------------------------
+    // addDrone - Mesa
+    // -------------------------------------------------------------------------
+
     @Test
     void shouldRegisterDroneWhenDataIsValid() {
         Drone drone = new Drone("D1", "Falcon-X", 20);
@@ -192,7 +194,7 @@ class RescueCenterTest {
 
         assertTrue(result);
     }
-    
+
     @Test
     void shouldNotRegisterDroneWhenDroneIsNull() {
         boolean result = center.addDrone(null);
@@ -218,5 +220,12 @@ class RescueCenterTest {
         boolean result = center.addDrone(drone2);
 
         assertFalse(result);
+    }
+
+    @Test
+    void shouldRegisterDroneAsAvailableByDefault() {
+        Drone drone = new Drone("D2", "Falcon-Z", 15);
+        center.addDrone(drone);
+        assertTrue(drone.isAvailable());
     }
 }
