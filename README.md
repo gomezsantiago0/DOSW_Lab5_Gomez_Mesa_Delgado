@@ -6,6 +6,14 @@
 - Santiago Gomez
 - Diego Mesa
 
+## Evidencia de cobertura
+
+### Primera ejecución
+![Cobertura inicial](docs/evidence/coverage-first.png)
+
+### Cobertura final
+![Cobertura final](docs/evidence/coverage-final.png)
+
 ## Descripción de SkyRescue
 
 SkyRescue es una plataforma de coordinación de drones para operaciones de emergencia urbana.
