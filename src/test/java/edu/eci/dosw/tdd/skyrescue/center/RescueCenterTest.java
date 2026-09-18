@@ -10,6 +10,10 @@ import edu.eci.dosw.tdd.skyrescue.drone.Drone;
 import edu.eci.dosw.tdd.skyrescue.mission.Mission;
 import edu.eci.dosw.tdd.skyrescue.mission.MissionStatus;
 import edu.eci.dosw.tdd.skyrescue.operator.RescueOperator;
+import edu.eci.dosw.tdd.skyrescue.drone.Drone;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 
@@ -178,5 +182,41 @@ class RescueCenterTest {
         } catch (IllegalArgumentException e) {
             // Expected exception, the test passes.
         }
+    }
+    
+    @Test
+    void shouldRegisterDroneWhenDataIsValid() {
+        Drone drone = new Drone("D1", "Falcon-X", 20);
+
+        boolean result = center.addDrone(drone);
+
+        assertTrue(result);
+    }
+    
+    @Test
+    void shouldNotRegisterDroneWhenDroneIsNull() {
+        boolean result = center.addDrone(null);
+
+        assertFalse(result);
+    }
+
+    @Test
+    void shouldNotRegisterDroneWhenIdIsBlank() {
+        Drone drone = new Drone("", "Falcon-X", 20);
+
+        boolean result = center.addDrone(drone);
+
+        assertFalse(result);
+    }
+
+    @Test
+    void shouldNotRegisterSecondDroneWhenIdIsDuplicated() {
+        Drone drone1 = new Drone("D1", "Falcon-X", 20);
+        Drone drone2 = new Drone("D1", "Falcon-Y", 30);
+
+        center.addDrone(drone1);
+        boolean result = center.addDrone(drone2);
+
+        assertFalse(result);
     }
 }
